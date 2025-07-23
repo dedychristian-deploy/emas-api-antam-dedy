@@ -26,13 +26,11 @@ async function scrapeHargaAntam() {
       timeout: 60000
     });
 
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
-    // Dump isi HTML ke file untuk debug
     const html = await page.content();
     fs.writeFileSync('dump_debug.html', html);
 
-    // Ambil elemen span.current jika ada
     const el = await page.$('span.current');
     let hargaText = null;
 
@@ -44,30 +42,28 @@ async function scrapeHargaAntam() {
     }
 
     const harga = hargaText ? parseInt(hargaText.replace(/[^\d]/g, '')) : null;
-
     const tanggal = new Date().toISOString().split('T')[0];
-    const newLine = `${tanggal},${harga}`;
 
-    // Update CSV (prepend line if not duplicate)
-    let existing = '';
-    if (fs.existsSync(csvPath)) {
-      existing = fs.readFileSync(csvPath, 'utf-8');
-      if (!existing.includes(tanggal)) {
-        fs.writeFileSync(csvPath, `Tanggal,Harga\n${newLine}\n` + existing.replace(/^Tanggal,Harga\n/, ''));
+    if (harga) {
+      const newLine = `${tanggal},${harga}`;
+
+      let existing = '';
+      if (fs.existsSync(csvPath)) {
+        existing = fs.readFileSync(csvPath, 'utf-8');
+        if (!existing.includes(tanggal)) {
+          fs.writeFileSync(csvPath, `Tanggal,Harga\n${newLine}\n` + existing.replace(/^Tanggal,Harga\n/, ''));
+        }
+      } else {
+        fs.writeFileSync(csvPath, `Tanggal,Harga\n${newLine}\n`);
       }
-    } else {
-      fs.writeFileSync(csvPath, `Tanggal,Harga
-${newLine}
-`);
+
+      const csvLines = fs.readFileSync(csvPath, 'utf-8').split('\n');
+      const hargaList = csvLines
+        .filter(line => line && !line.startsWith('Tanggal'))
+        .map(line => line.split(',')[1]);
+
+      fs.writeFileSync(txtPath, hargaList.join(';'));
     }
-
-    // Generate TXT dari CSV
-    const csvLines = fs.readFileSync(csvPath, 'utf-8').split('\n');
-    const hargaList = csvLines
-      .filter(line => line && !line.startsWith('Tanggal'))
-      .map(line => line.split(',')[1]);
-
-    fs.writeFileSync(txtPath, hargaList.join(';'));
 
     console.log({ tanggal, harga, csv: csvPath, txt: txtPath });
     return { tanggal, harga };

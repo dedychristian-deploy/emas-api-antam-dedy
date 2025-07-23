@@ -42,7 +42,6 @@ async function scrapeHargaAntam() {
     }
 
     const harga = hargaText ? parseInt(hargaText.replace(/[^\d]/g, '')) : null;
-    
     const tanggal = new Date().toISOString().split('T')[0];
 
     if (harga) {

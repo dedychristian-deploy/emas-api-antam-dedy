@@ -26,7 +26,7 @@ async function scrapeHargaAntam() {
       timeout: 60000
     });
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
 
     // Dump isi HTML ke file untuk debug
     const html = await page.content();

@@ -41,10 +41,7 @@ async function scrapeHargaAntam() {
       console.log('Elemen span.current tidak ditemukan');
     }
 
-    //const harga = hargaText ? parseInt(hargaText.replace(/[^\d]/g, '')) : null;
-    const harga = hargaText
-  ? parseInt(hargaText.replace(/[^\d,]/g, '').replace(',', ''))
-  : null;
+    const harga = hargaText ? parseInt(hargaText.replace(/[^\d]/g, '')) : null;
     
     const tanggal = new Date().toISOString().split('T')[0];
 

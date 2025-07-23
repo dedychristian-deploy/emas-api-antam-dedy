@@ -53,10 +53,7 @@ async function scrapeHargaAntam() {
     if (fs.existsSync(csvPath)) {
       existing = fs.readFileSync(csvPath, 'utf-8');
       if (!existing.includes(tanggal)) {
-        fs.writeFileSync(csvPath, `Tanggal,Harga
-${newLine}
-` + existing.replace(/^Tanggal,Harga
-/, ''));
+        fs.writeFileSync(csvPath, `Tanggal,Harga\n${newLine}\n` + existing.replace(/^Tanggal,Harga\n/, ''));
       }
     } else {
       fs.writeFileSync(csvPath, `Tanggal,Harga
